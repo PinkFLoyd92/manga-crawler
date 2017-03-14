@@ -1,19 +1,13 @@
+import manga_chooser
 import sys
-import json
-import scrapy
-from twisted.internet import reactor, defer
-from mangafox.spiders.image_spider import ImagesSpider
-from scrapy.crawler import CrawlerProcess
+
+MANGA_CHAPTER = sys.argv[2]
+MANGA_NAME = sys.argv[1]
+
 
 def main():
-    process = CrawlerProcess({
-        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
-        'FEED_FORMAT': 'json',
-        'FEED_URI': 'result.json'
-    })
-
-    process.crawl(ImagesSpider, manga_name=sys.argv[1], episode=sys.argv[2])
-    process.start()
+    manga_chooser.main_choose_manga(MANGA_NAME, MANGA_CHAPTER)
 
 
-main()
+if __name__ == '__main__':
+    main()

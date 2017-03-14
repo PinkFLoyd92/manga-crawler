@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 from manga_crawler import Crawler
+import urllib.request
 
 
 def print_formatted_urls(list_urls):
@@ -16,7 +17,8 @@ def print_formatted_urls(list_urls):
     return index
 
 
-def get_html_manga_souce(manga_name):
+# this is one method, using selenium (not used...)
+def get_html_manga_souce_selenium(manga_name):
     driver = webdriver.Firefox()
     driver.set_page_load_timeout(3)
     driver.get("http://mangafox.me/directory/")
@@ -31,20 +33,29 @@ def get_html_manga_souce(manga_name):
     return source
 
 
+def get_html_manga_source(manga_name):
+    link = "http://mangafox.me/search.php?name_method=cw&name= " + manga_name  + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres[Action]=0&genres[Adult]=0&genres[Adventure]=0&genres[Comedy]=0&genres[Doujinshi]=0&genres[Drama]=0&genres[Ecchi]=0&genres[Fantasy]=0&genres[Gender+Bender]=0&genres[Harem]=0&genres[Historical]=0&genres[Horror]=0&genres[Josei]=0&genres[Martial+Arts]=0&genres[Mature]=0&genres[Mecha]=0&genres[Mystery]=0&genres[One+Shot]=0&genres[Psychological]=0&genres[Romance]=0&genres[School+Life]=0&genres[Sci-fi]=0&genres[Seinen]=0&genres[Shoujo]=0&genres[Shoujo+Ai]=0&genres[Shounen]=0&genres[Shounen+Ai]=0&genres[Slice+of+Life]=0&genres[Smut]=0&genres[Sports]=0&genres[Supernatural]=0&genres[Tragedy]=0&genres[Webtoons]=0&genres[Yaoi]=0&genres[Yuri]=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1"
+    file = urllib.request.urlopen(link)
+    return file.read().decode(file.headers.get_content_charset())
+
+
 def get_list_of_mangas(manga_name):
     list_urls = []
     # testing purposes...
-    if path.isfile("test.html"):
-        fo = open("test.html", "r")
-        soup = BeautifulSoup(fo.read(), 'html.parser')
-        fo.close()
-    else:
-        source = get_html_manga_souce(manga_name)
-        soup = BeautifulSoup(source, 'html.parser')
-        # test
-        fo = open("test.html", "w")
-        fo.write(source)
-        fo.close()
+    # if path.isfile("test2.html"):
+    #     fo = open("test.html", "r")
+    #     soup = BeautifulSoup(fo.read(), 'html.parser')
+    #     fo.close()
+    # else:
+    #     source = get_html_manga_source(manga_name)
+    #     soup = BeautifulSoup(source, 'html.parser')
+    #     # test
+    #     fo = open("test.html", "w")
+    #     fo.write(source)
+    #     fo.close()
+
+    source = get_html_manga_source(manga_name)
+    soup = BeautifulSoup(source, 'html.parser')
 
     div = soup.find(id="mangalist")
     mangalist = div.find("ul", "list")
@@ -103,4 +114,3 @@ def main_choose_manga(manga_name, chapters=None, volumen=None):
         return -1
 
 
-main_choose_manga('bleach', '1')
