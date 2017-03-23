@@ -1,9 +1,10 @@
 import time
-import os.path as path
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 from manga_crawler import Crawler
+from config_parser import change_to_main_manga_dir
+from config_parser import change_to_manga_dir
 import urllib.request
 
 
@@ -82,10 +83,10 @@ def get_user_choice(list_urls):
             print("Try again...")
 
 
-def get_mangas_in_range(crawler, manga_chosen, chapters):
+def get_mangas_in_range(crawler, manga_chosen, chapters, path=None):
     range_mangas = map(int, chapters.split('-'))
-    for mng in range_mangas:
-        print(str(mng))
+    range_mangas = list(range_mangas)
+    crawler.crawl_image_from_chapters(manga_chosen, range_mangas, path=path)
 
 
 # manga_chosen: url to manga's main page.
@@ -94,7 +95,8 @@ def get_single_manga(crawler, manga_chosen, chapters):
 
 
 # chapters: String, volumen: String, manga_name: String
-def main_choose_manga(manga_name, chapters=None, volumen=None):
+def main_choose_manga(manga_name, chapters=None, volumen=None, path=None):
+    root_dir = change_to_main_manga_dir(path)  # root manga directory..
     crawler = Crawler()
     list_urls = list(get_list_of_mangas(manga_name))
     manga_chosen = get_user_choice(list_urls)
@@ -106,11 +108,11 @@ def main_choose_manga(manga_name, chapters=None, volumen=None):
         # DOWNLOAD EVERY CHAPTER AVAILABLE...
         return -1
     elif '-' in chapters:
-        get_mangas_in_range(crawler, manga_chosen, chapters)
+        get_mangas_in_range(crawler, manga_chosen, chapters, path=root_dir)
         return -1
     else:
         # DOWNLOAD A SINGLE CHAPTER.
+        name = manga_chosen.split('/')[4]
+        change_to_manga_dir(path, name, chapters)
         get_single_manga(crawler, manga_chosen, chapters)
         return -1
-
-

@@ -2,12 +2,13 @@ import urllib.request
 import scrapy
 from scrapy import signals
 import utilities
+from config_parser import change_to_manga_dir
 
 
 class MainSpider(scrapy.Spider):
 
     # manga_link: URL(STRING) chapter:(String)
-    def __init__(self, manga_link, chapter):
+    def __init__(self, manga_link, chapter, root_path=None):
         self.number_of_pages = 0
         self.download_delay = 1
         self.manga_link = manga_link
@@ -17,12 +18,14 @@ class MainSpider(scrapy.Spider):
         self.last_url = ""
         self.current_url = ""
         self.flag = True
+        self.root_path = root_path
 
     name = "mangafox"
 
     def parse(self, response):
         chapter_link = ""
         self.page_number = 1
+        self.chapter_bak = self.chapter
         self.chapter = utilities.addzeros(self.chapter)
 
         while True:
@@ -52,6 +55,8 @@ class MainSpider(scrapy.Spider):
 
         self.page_number = self.page_number + 1
         image_url = response.css('img#image::attr(src)').extract()[0]
+        name = self.manga_link.split('/')[4]
+        change_to_manga_dir(self.root_path, name, self.chapter_bak)
         try:
             urllib.request.urlretrieve(image_url, self.manga_link.split('/')[4]
                                        + str(response.url).split('/')[7][:-5]
