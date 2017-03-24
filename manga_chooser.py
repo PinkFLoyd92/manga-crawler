@@ -6,6 +6,7 @@ from manga_crawler import Crawler
 from config_parser import change_to_main_manga_dir
 from config_parser import change_to_manga_dir
 import urllib.request
+import requests
 
 
 def print_formatted_urls(list_urls):
@@ -89,13 +90,38 @@ def get_mangas_in_range(crawler, manga_chosen, chapters, path=None):
     crawler.crawl_image_from_chapters(manga_chosen, range_mangas, path=path)
 
 
+def get_number_of_chapters(manga_chosen):
+    chapters = []
+    main_manga_doc = requests.get(manga_chosen)
+    soup = BeautifulSoup(main_manga_doc.content, 'html.parser')
+    anchors = soup.find_all('a')
+    for a in anchors:
+        try:
+            if('tips' in a['class']):
+                chapters.append(a['href'].split('/')[5][1::])
+        except KeyError:
+            pass
+    return chapters
+
+
+def get_all_mangas(crawler, manga_chosen, path=None):
+    range_chapters = get_number_of_chapters(manga_chosen)
+    crawler.crawl_image_from_chapters(manga_chosen,
+                                      range_chapters,
+                                      path=path)
+
+
 # manga_chosen: url to manga's main page.
 def get_single_manga(crawler, manga_chosen, chapters):
     crawler.crawl_image_from_chapter(manga_chosen, chapters)
 
 
 # chapters: String, volumen: String, manga_name: String
-def main_choose_manga(manga_name, chapters=None, volumen=None, path=None):
+def main_choose_manga(manga_name,
+                      chapters=None,
+                      volumen=None,
+                      path=None,
+                      all_manga=False):
     root_dir = change_to_main_manga_dir(path)  # root manga directory..
     crawler = Crawler()
     list_urls = list(get_list_of_mangas(manga_name))
@@ -104,8 +130,9 @@ def main_choose_manga(manga_name, chapters=None, volumen=None, path=None):
     if volumen is not None:
         # DOWNLOAD VOLUMEN
         return -1
-    if chapters is None:
+    if chapters is None and all_manga is True:
         # DOWNLOAD EVERY CHAPTER AVAILABLE...
+        get_all_mangas(crawler, manga_chosen, path=root_dir)
         return -1
     elif '-' in chapters:
         get_mangas_in_range(crawler, manga_chosen, chapters, path=root_dir)

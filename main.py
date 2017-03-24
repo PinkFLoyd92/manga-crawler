@@ -19,10 +19,16 @@ def main():
                                         args.chapter,
                                         read_file(args.config))
     # --manga/-m bleach --chapter/-c 1
-    manga_chooser.main_choose_manga(manga_name=args.manga,
-                                    chapters=args.chapter,
-                                    path=read_file(DEFAULT_PATH),
-                                    volumen=None)
+    if(not args.all):
+        manga_chooser.main_choose_manga(manga_name=args.manga,
+                                        chapters=args.chapter,
+                                        path=read_file(DEFAULT_PATH),
+                                        volumen=None)
+    else:
+        manga_chooser.main_choose_manga(manga_name=args.manga,
+                                        chapters=args.chapter,
+                                        path=read_file(DEFAULT_PATH),
+                                        volumen=None, all_manga=True)
 
 
 if __name__ == '__main__':
