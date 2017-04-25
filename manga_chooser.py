@@ -98,10 +98,17 @@ def get_number_of_chapters(manga_chosen):
     for a in anchors:
         try:
             if('tips' in a['class']):
-                chapters.append(a['href'].split('/')[5][1::])
+                if(len(a['href'].split('/')) == 8):
+                    chapt_number = a['href'].split('/')[6][1::]
+                else:
+                    chapt_number = a['href'].split('/')[5][1::]
+                if(chapt_number in chapters):
+                    print("error.... repeated chapter")
+                else:
+                    chapters.append(chapt_number)
         except KeyError:
             pass
-    return chapters
+    return list(reversed(chapters))
 
 
 def get_all_mangas(crawler, manga_chosen, path=None):

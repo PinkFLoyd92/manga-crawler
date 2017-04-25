@@ -39,6 +39,7 @@ class MainSpider(scrapy.Spider):
             yield scrapy.Request(chapter_link, self.parse_image)
             if(self.page_number
                == self.number_of_pages + 1) and (self.number_of_pages > 0):
+                print("Finished downloading chapter: %s" % self.chapter)
                 break
 
     def spider_closed(self, spider):
@@ -47,7 +48,7 @@ class MainSpider(scrapy.Spider):
     def parse_image(self, response):
         if(self.flag is True):
             select = response.xpath('//select[contains(@class, "m")]')[0]
-            print(select)
+            # print(select)
             options = select.xpath("//option/@value").extract()
             options = map(int, options)
             self.number_of_pages = max(options)
@@ -58,6 +59,7 @@ class MainSpider(scrapy.Spider):
         name = self.manga_link.split('/')[4]
         change_to_manga_dir(self.root_path, name, self.chapter_bak)
         try:
+            print('Downloaded page ' + self.page_number)
             urllib.request.urlretrieve(image_url, self.manga_link.split('/')[4]
                                        + str(response.url).split('/')[7][:-5]
                                        + ".jpg")
