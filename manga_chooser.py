@@ -119,8 +119,8 @@ def get_all_mangas(crawler, manga_chosen, path=None):
 
 
 # manga_chosen: url to manga's main page.
-def get_single_manga(crawler, manga_chosen, chapters):
-    crawler.crawl_image_from_chapter(manga_chosen, chapters)
+def get_single_manga(crawler, manga_chosen, chapters, path):
+    crawler.crawl_image_from_chapter(manga_chosen, chapters, path=path)
 
 
 # chapters: String, volumen: String, manga_name: String
@@ -148,5 +148,5 @@ def main_choose_manga(manga_name,
         # DOWNLOAD A SINGLE CHAPTER.
         name = manga_chosen.split('/')[4]
         change_to_manga_dir(path, name, chapters)
-        get_single_manga(crawler, manga_chosen, chapters)
+        get_single_manga(crawler, manga_chosen, chapters, path=root_dir)
         return -1

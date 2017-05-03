@@ -1,6 +1,6 @@
 from mangafox.spiders.image_spider import MainSpider
 # from scrapy.crawler import CrawlerProcess
-from scrapy.crawler import CrawlerRunner
+from scrapy.crawler import CrawlerProcess
 # from config_parser import change_to_manga_dir
 from twisted.internet import reactor, defer
 from scrapy.settings import Settings
@@ -14,13 +14,13 @@ class Crawler:
             'FEED_FORMAT': 'json',
             'DOWNLOAD_DELAY': 2,
             'REACTOR_THREADPOOL_MAXSIZE': 2,
-            'LOG_LEVEL': 'DEBUG'
+            'LOG_LEVEL': 'WARNING'
         }, priority='project')
-        self.process = CrawlerRunner(settings=settings)
+        self.process = CrawlerProcess(settings=settings)
 
-    def crawl_image_from_chapter(self, manga_link, chapter):
+    def crawl_image_from_chapter(self, manga_link, chapter, path=None):
         self.process.crawl(MainSpider, manga_link,
-                           chapter)
+                           chapter, root_path=path)
         self.process.start()
 
     @defer.inlineCallbacks

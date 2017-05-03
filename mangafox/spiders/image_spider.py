@@ -37,6 +37,8 @@ class MainSpider(scrapy.Spider):
                             + "%d" % self.page_number
                             + ".html")
             yield scrapy.Request(chapter_link, self.parse_image)
+            # print("Finished downloading page: %d from chapter %s"
+            #       % (self.page_number, self.chapter))
             if(self.page_number
                == self.number_of_pages + 1) and (self.number_of_pages > 0):
                 print("Finished downloading chapter: %s" % self.chapter)
@@ -59,7 +61,7 @@ class MainSpider(scrapy.Spider):
         name = self.manga_link.split('/')[4]
         change_to_manga_dir(self.root_path, name, self.chapter_bak)
         try:
-            print('Downloaded page ' + self.page_number)
+            print('Downloaded page  %d' % (self.page_number - 1))
             urllib.request.urlretrieve(image_url, self.manga_link.split('/')[4]
                                        + str(response.url).split('/')[7][:-5]
                                        + ".jpg")
