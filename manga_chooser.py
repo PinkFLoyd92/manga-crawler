@@ -36,7 +36,7 @@ def get_html_manga_souce_selenium(manga_name):
 
 
 def get_html_manga_source(manga_name):
-    link = "http://mangafox.me/search.php?name_method=cw&name= " + manga_name  + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres[Action]=0&genres[Adult]=0&genres[Adventure]=0&genres[Comedy]=0&genres[Doujinshi]=0&genres[Drama]=0&genres[Ecchi]=0&genres[Fantasy]=0&genres[Gender+Bender]=0&genres[Harem]=0&genres[Historical]=0&genres[Horror]=0&genres[Josei]=0&genres[Martial+Arts]=0&genres[Mature]=0&genres[Mecha]=0&genres[Mystery]=0&genres[One+Shot]=0&genres[Psychological]=0&genres[Romance]=0&genres[School+Life]=0&genres[Sci-fi]=0&genres[Seinen]=0&genres[Shoujo]=0&genres[Shoujo+Ai]=0&genres[Shounen]=0&genres[Shounen+Ai]=0&genres[Slice+of+Life]=0&genres[Smut]=0&genres[Sports]=0&genres[Supernatural]=0&genres[Tragedy]=0&genres[Webtoons]=0&genres[Yaoi]=0&genres[Yuri]=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1"
+    link = "http://mangafox.me/search.php?name_method=bw&name= " + manga_name  + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres[Action]=0&genres[Adult]=0&genres[Adventure]=0&genres[Comedy]=0&genres[Doujinshi]=0&genres[Drama]=0&genres[Ecchi]=0&genres[Fantasy]=0&genres[Gender+Bender]=0&genres[Harem]=0&genres[Historical]=0&genres[Horror]=0&genres[Josei]=0&genres[Martial+Arts]=0&genres[Mature]=0&genres[Mecha]=0&genres[Mystery]=0&genres[One+Shot]=0&genres[Psychological]=0&genres[Romance]=0&genres[School+Life]=0&genres[Sci-fi]=0&genres[Seinen]=0&genres[Shoujo]=0&genres[Shoujo+Ai]=0&genres[Shounen]=0&genres[Shounen+Ai]=0&genres[Slice+of+Life]=0&genres[Smut]=0&genres[Sports]=0&genres[Supernatural]=0&genres[Tragedy]=0&genres[Webtoons]=0&genres[Yaoi]=0&genres[Yuri]=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1"
     file = urllib.request.urlopen(link)
     return file.read().decode(file.headers.get_content_charset())
 
@@ -64,7 +64,10 @@ def get_list_of_mangas(manga_name):
     manga_anchors = mangalist.find_all("a")
     for anchor in manga_anchors:
         if anchor.get('href').count('/') == 5:
-            list_urls.append(anchor.get('href'))
+            if('http' not in anchor.get('href')):
+                list_urls.append('http:' + anchor.get('href'))
+            else:
+                list_urls.append(anchor.get('href'))
     list_urls = set(list_urls)
     return list_urls
 
@@ -139,6 +142,7 @@ def main_choose_manga(manga_name,
         return -1
     if chapters is None and all_manga is True:
         # DOWNLOAD EVERY CHAPTER AVAILABLE...
+        # print(manga_chosen)
         get_all_mangas(crawler, manga_chosen, path=root_dir)
         return -1
     elif '-' in chapters:

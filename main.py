@@ -13,7 +13,9 @@ def main():
     # manga_chooser.main_choose_manga(MANGA_NAME, MANGA_CHAPTER)
     arg_manager = ArgParser()
     arg_manager.add_arg()
-    args = arg_manager.parser.parse_args()
+    args, error = arg_manager.parser.parse_known_args()
+    #print(error)
+    #print(args)
     if args.config:
         manga_chooser.main_choose_manga(args.manga,
                                         args.chapter,
